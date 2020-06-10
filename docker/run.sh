@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [[ -z "$1" ]] || [[ -z "$2" ]]; then
+if [[ -z "$1" ]]; then
     if [[ -z "$1" ]]; then
         echo "RELEASE_VERSION argument is required" 1>&2
     fi
@@ -20,7 +20,7 @@ printf '\n          Call container tag:  csantosm/openvidu-call:%s'  "${RELEASE_
 printf '\n     -------------------------------------------------------------'
 printf '\n'
 
-docker build -f prod.dockerfile -t csantosm/openvidu-call:${RELEASE_VERSION} --build-arg BRANCH_NAME=${BRANCH_NAME} --build-arg BASE_HREF=${CALL_BASE_HREF} .
+docker build -f docker/prod.dockerfile -t csantosm/openvidu-call:${RELEASE_VERSION} --build-arg BRANCH_NAME=${BRANCH_NAME} --build-arg BASE_HREF=${CALL_BASE_HREF} . || exit 1;
 
 printf '\n'
 printf '\n     Pushing containers to CSantosM DockerHub'

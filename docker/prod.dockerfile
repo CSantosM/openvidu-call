@@ -3,13 +3,15 @@ FROM node:lts-alpine3.11 as openvidu-call-build
 
 WORKDIR /openvidu-call
 
-ARG BRANCH_NAME=master
 ARG BASE_HREF=/
 
-RUN apk add wget unzip
+COPY openvidu-call-front openvidu-call-front
+COPY openvidu-call-back openvidu-call-back
 
 # Download openvidu-call from specific branch (master by default), intall openvidu-browser and build for production
-RUN npm i --prefix openvidu-call-front && \
+RUN rm openvidu-call-front/package-lock.json && \
+    rm openvidu-call-back/package-lock.json && \
+    npm i --prefix openvidu-call-front && \
     npm run build-prod ${BASE_HREF} --prefix openvidu-call-front && \
     rm -rf openvidu-call-front && \
     # Install openvidu-call-back dependencies and build it for production
@@ -25,7 +27,7 @@ WORKDIR /opt/openvidu-call
 
 COPY --from=openvidu-call-build /openvidu-call/dist .
 # Entrypoint
-COPY ./entrypoint.sh /usr/local/bin
+COPY docker/entrypoint.sh /usr/local/bin
 RUN apk add curl && \
     chmod +x /usr/local/bin/entrypoint.sh && \
     npm install -g nodemon
